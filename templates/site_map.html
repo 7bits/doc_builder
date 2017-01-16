@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Documentation</title>
+    <link href="//rawgit.com/richleland/pygments-css/master/github.css" rel="stylesheet"/>
+    <link href="//markdowncss.github.io/modest/css/modest.css" rel="stylesheet" />
+</head>
+<body>
+    <header>
+        <h1>Documentation</h1>
+        <p>Welcome to step-to-dream!</p>
+    </header>
+    <main>
+    {% for branch, dirs in map.items() %}
+        <article>
+            <header>
+                <h3>{{branch}}</h3>
+            </header>
+            <section>
+                {% for dir, files in dirs.items() %}
+                <header>
+                    <h4>{{dir}}</h4>
+                </header>
+                <section>
+                    {% for file in files %}
+                    <p><a href="{{ file[0] }}">{{ file[1] }}</a></p>
+                    {% endfor %}
+                </section>
+                {% endfor %}
+            </section>
+        </article>
+    {% endfor %}
+    </main>
+</body>
+</html>
