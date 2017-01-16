@@ -5,7 +5,7 @@ import os
 from markdown2 import Markdown
 from jinja2 import Environment, PackageLoader
 import git
-import configparser
+import yaml
 
 md = Markdown(extras=['fenced-code-blocks', 'tables'])
 jinja = Environment(loader=PackageLoader('main', 'templates'))
@@ -126,27 +126,28 @@ def save_site_map(path, branches):
 
 
 def build_docs(config):
-    targets = [
-        (config['backend_path'], config['build_path'], config['backend_doc_path'], config['backend_target_name']),
-        (config['ui_path'], config['build_path'], config['ui_doc_path'], config['ui_target_name'])]
-
     action = {'all_branches': walk_and_save, 'current_branch': walk_and_save_files}
 
     branches = []
-    for target in targets:
-        repo_path, build_path, doc_path, target_name = target
-        print("===={}====".format(target_name))
-        branches.append(action[config['mode']](repo_path, build_path, doc_path, target_name))
+    build_path = config['build']['path']
+    mode = config['build']['mode']
+    for target in config['targets']:
+        repo_path = target['path']
+        doc_path = target['docs_path']
+        name = target['name']
+        print("===={}====".format(name))
+        branches.append(action[mode](repo_path, build_path, doc_path, name))
 
     return list(set([item for sublist in branches for item in sublist]))
 
 
 def main():
-    parser = configparser.ConfigParser()
-    parser.read('config.ini')
-    cfg = parser['DEFAULT']
-    branches = build_docs(cfg)
-    save_site_map(cfg['build_path'], branches)
+    with codecs.open('./config.yml',
+                     mode='w',
+                     encoding='utf-8') as fd:
+        cfg = yaml.load(fd.read())
+        branches = build_docs(cfg)
+        save_site_map(cfg['build']['path'], branches)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,11 @@
+build:
+  path: /home/ilya/Documents/project/docs
+  #mode: current_branch
+  mode: all_branches
+targets:
+  - path: /home/ilya/Documents/project/backend
+    docs_path: Endpoints
+    name: api
+  - path: /home/ilya/Documents/project/frontend
+    docs_path: doc
+    name: usecases
