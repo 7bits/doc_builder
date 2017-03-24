@@ -1,8 +1,8 @@
-clean:
-	rm -rf build/
-
-package:
+all:
 	./main.py
 
-localRun:
+install:
+	pip3 install -r requirements.txt
+
+server:
 	http-server build

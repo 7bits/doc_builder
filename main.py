@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 
 import codecs
 import os
@@ -58,7 +58,7 @@ def walk_branches(repo_path):
     :param repo_path: is an absolute path of a git repo
     """
     repo = git.Repo(repo_path)
-    
+
     # 'git fetch -p' for prune. It syncs your local origin with remote.
     # Thus deleted branches in remote repo will not be pulled.
     # Without this option error will be thrown: stderr: 'fatal: Couldn't find remote ref feature/us-calendar-dialog
@@ -143,7 +143,7 @@ def build_docs(config):
 
 def main():
     with codecs.open('./config.yml',
-                     mode='w',
+                     mode='r',
                      encoding='utf-8') as fd:
         cfg = yaml.load(fd.read())
         branches = build_docs(cfg)
