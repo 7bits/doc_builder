@@ -75,3 +75,5 @@ ENV/
 
 .idea
 config.ini
+
+config.yml
