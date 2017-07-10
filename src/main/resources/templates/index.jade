@@ -1,0 +1,14 @@
+doctype html
+html(lang='en')
+    head
+        meta(charset='UTF-8')
+        title Documentation
+        link(href="https://markdowncss.github.io/modest/css/modest.css", rel="stylesheet")
+
+    body
+        h1 Documentation
+        for doc in docs
+            article
+                header
+                    h3
+                        a(href=doc) #{doc}
