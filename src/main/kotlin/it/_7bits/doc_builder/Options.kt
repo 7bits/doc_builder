@@ -23,6 +23,13 @@ class Options {
     var target: Path = Paths.get("doc_build")
 
     @Parameter(
+            names = arrayOf("--server"),
+            description = "Run server to host static ot not",
+            required = false
+    )
+    var server: Boolean = false
+
+    @Parameter(
             names = arrayOf("--help", "--usage"),
             description = "Display the help"
     )

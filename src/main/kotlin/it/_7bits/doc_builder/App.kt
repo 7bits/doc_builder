@@ -19,6 +19,10 @@ class App {
             }
 
             Documentation.build(options.source, options.target)
+
+            if (options.server) {
+                StaticServer.start(filesPath = options.target.toAbsolutePath().toString())
+            }
         }
     }
 }

@@ -31,6 +31,8 @@ dependencies {
     compile "com.vladsch.flexmark:flexmark-all:0.20.0"
     compile "com.beust:jcommander:1.71"
     compile "de.neuland-bfi:jade4j:1.2.5"
+    compile "com.sparkjava:spark-core:2.6.0"
+    compile 'ch.qos.logback:logback-classic:1.2.3'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
