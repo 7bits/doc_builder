@@ -9,6 +9,7 @@ import java.util.function.BiPredicate
 import kotlin.streams.toList
 
 object Documentation {
+    private val log = logger()
     private val writer = JadeWriter("templates/layout")
     private val indexWriter = JadeWriter("templates/index")
     private val glob = FileSystems.getDefault().getPathMatcher("glob:**.{md,markdown}")
@@ -16,7 +17,7 @@ object Documentation {
 
     fun build(source: Path, target: Path) {
         if (!Files.exists(source)) {
-            println("Path '${source.toAbsolutePath()}' does not exists.")
+            log.info("Path '${source.toAbsolutePath()}' does not exists.")
             return
         }
         try {
@@ -25,22 +26,20 @@ object Documentation {
                 Files.delete(it)
             }
         } catch (e: Exception) {
-            println("can't create target at path '${target.toAbsolutePath()}'")
-            e.printStackTrace()
+            log.error("Can't create target at path '${target.toAbsolutePath()}'.", e)
         }
 
         val docs = Files.find(source, 4, BiPredicate<Path, BasicFileAttributes> { t, _ ->
             glob.matches(t)
         }).toList().mapNotNull {
             try {
-                println(it.toAbsolutePath())
+                log.info(it.toAbsolutePath().toString())
                 val content = renderer.render(it.toFile().reader())
                 val file = createFile(it, target)
                 writer.write(mapOf("content" to content), file.writer())
                 file.name
             } catch (e: Exception) {
-                println("Can't convert file '${it.toAbsolutePath()}'")
-                e.printStackTrace()
+                log.warn("Can't convert file '${it.toAbsolutePath()}'.", e)
                 null
             }
         }
@@ -52,7 +51,6 @@ object Documentation {
         val fname = "${path.parent.fileName}_${path.fileNameWithoutExt()}.html"
         val file = target.resolve(fname).toFile()
         file.createNewFile()
-        println(fname)
         return file
     }
 

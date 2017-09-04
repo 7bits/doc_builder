@@ -33,6 +33,7 @@ dependencies {
     compile "de.neuland-bfi:jade4j:1.2.5"
     compile "com.sparkjava:spark-core:2.6.0"
     compile 'ch.qos.logback:logback-classic:1.2.3'
+    compile 'org.eclipse.jgit:org.eclipse.jgit:3.5.0.201409260305-r'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
