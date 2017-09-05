@@ -4,12 +4,16 @@ import com.vladsch.flexmark.html.HtmlRenderer
 import com.vladsch.flexmark.parser.Parser
 import java.io.Reader
 
-class MarkdownRenderer {
+class MarkdownRenderer: IRenderer {
     private val parser = Parser.builder().build()
     private val renderer = HtmlRenderer.builder().build()
 
-    fun render(reader: Reader): String {
+    override fun render(reader: Reader): String {
         val node = parser.parseReader(reader)
         return renderer.render(node)
     }
+}
+
+interface IRenderer {
+    fun render(reader: Reader): String
 }

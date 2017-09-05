@@ -4,6 +4,7 @@ import com.beust.jcommander.IStringConverter
 import com.beust.jcommander.Parameter
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.regex.Pattern
 
 class Options {
     @Parameter(
@@ -30,6 +31,21 @@ class Options {
     var server: Boolean = false
 
     @Parameter(
+            names = arrayOf("--git"),
+            description = "Use git and generate as many API versions as many git refs exists",
+            required = false
+    )
+    var git: Boolean = false
+
+    @Parameter(
+            names = arrayOf("--pattern"),
+            description = "File name extractor pattern. Read how java Matcher and Pattern works",
+            required = false,
+            converter = PatternConverter::class
+    )
+    var pattern: Pattern = Pattern.compile(".*/(.*?)/doc/index\\.md")
+
+    @Parameter(
             names = arrayOf("--help", "--usage"),
             description = "Display the help"
     )
@@ -42,4 +58,11 @@ class PathConverter: IStringConverter<Path?> {
         return Paths.get(value)
     }
 
+}
+
+class PatternConverter: IStringConverter<Pattern?> {
+    override fun convert(value: String?): Pattern? {
+        if (value == null) return null
+        return Pattern.compile(value)
+    }
 }
