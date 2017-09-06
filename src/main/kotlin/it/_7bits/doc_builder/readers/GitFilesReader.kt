@@ -5,7 +5,9 @@ import org.eclipse.jgit.lib.Constants
 import java.nio.file.FileSystems
 import java.nio.file.Path
 
-class GitFilesReader(private val target: String = Constants.HEAD): IFileReader {
+class GitFilesReader(
+        private val target: String = Constants.HEAD
+): IFileReader {
     private val glob = FileSystems.getDefault().getPathMatcher("glob:**.{md,markdown}")
 
     override fun all(source: Path): Sequence<Doc> {

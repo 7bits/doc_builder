@@ -16,12 +16,12 @@ class Options {
     var source: Path = Paths.get("Features")
 
     @Parameter(
-            names = arrayOf("--target", "-t"),
-            description = "Path to the target location",
+            names = arrayOf("--destination", "-d"),
+            description = "Path to the destination location",
             required = false,
             converter = PathConverter::class
     )
-    var target: Path = Paths.get("doc_build")
+    var destination: Path = Paths.get("doc_build")
 
     @Parameter(
             names = arrayOf("--server"),

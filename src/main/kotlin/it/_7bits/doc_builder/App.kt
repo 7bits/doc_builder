@@ -3,6 +3,9 @@ package it._7bits.doc_builder
 import com.beust.jcommander.JCommander
 import it._7bits.doc_builder.readers.GitFilesReader
 import it._7bits.doc_builder.readers.LocalFilesReader
+import it._7bits.doc_builder.versions.DummyVersionGenerator
+import it._7bits.doc_builder.versions.GitVersionsGenerator
+import java.nio.file.Paths
 
 class App {
     companion object {
@@ -22,25 +25,41 @@ class App {
                 return
             }
 
-            val doc = Documentation(
-                    source = options.source,
-                    target = options.target,
-                    fileReader = if (options.git) {
-                        GitFilesReader()
-                    } else {
-                        LocalFilesReader()
-                    },
-                    fileNameBuilder = FileNameBuilder(pattern = options.pattern),
-                    writer = JadeWriter("templates/layout"),
-                    indexWriter = JadeWriter("templates/index"),
-                    renderer = MarkdownRenderer()
-            )
+            val generator = if (options.git) GitVersionsGenerator() else DummyVersionGenerator()
+            val fileNameBuilder = FileNameBuilder(pattern = options.pattern)
+            val writer = JadeWriter("templates/layout")
+            val indexWriter = JadeWriter("templates/index")
+            val indexRenderer = IndexRenderer(indexWriter)
+            val renderer = MarkdownRenderer()
 
-            doc.build()
+            val serverThread = Thread({
+                if (options.server) {
+                    StaticServer.start(filesPath = options.destination.toAbsolutePath().toString())
+                }
+            })
+            serverThread.start()
 
-            if (options.server) {
-                StaticServer.start(filesPath = options.target.toAbsolutePath().toString())
+            val versions = generator.versions(source = options.source, destination = options.destination)
+            versions.forEach { destination ->
+                log.info("Version: ${destination.fileName}")
+                val fileReader = if (options.git) GitFilesReader(destination.fileName.toString()) else LocalFilesReader()
+                val doc = Documentation(
+                        source = options.source,
+                        destination = destination,
+                        fileReader = fileReader,
+                        fileNameBuilder = fileNameBuilder,
+                        writer = writer,
+                        renderer = renderer
+                )
+
+                val docs = doc.build()
+                indexRenderer.createIndex(docs.map { destination.fileName.resolve(it) }, destination)
             }
+
+            indexRenderer.createIndex(versions.map { it.fileName }, options.destination)
+
+
+            serverThread.join()
         }
     }
 }

@@ -15,12 +15,39 @@ import java.nio.file.Paths
 object GitFacade {
     private val log = logger()
 
-    fun branches(path: Path): List<String> {
+    fun branches(path: Path): Sequence<String> {
         val gitDir = path.resolve(".git")
         val repo = FileRepositoryBuilder().setGitDir(gitDir.toFile()).build()
         val git = Git(repo)
-        return git.branchList().setListMode(ListBranchCommand.ListMode.ALL).call()
-                .toList().filterNotNull().map { it.name }
+        return git.branchList()
+                .setListMode(ListBranchCommand.ListMode.ALL)
+                .call()
+                .asSequence()
+                .filterNotNull()
+                .map { it.name }
+                .map {
+                    // TODO: I know it could be regexp but who cares
+                    it
+                            .replace("refs/heads/", "")
+                            .replace("refs/remotes/", "")
+                            .replace("/", "__")
+                }.filterNot { it == "HEAD" }
+    }
+
+    fun tags(path: Path): Sequence<String> {
+        val gitDir = path.resolve(".git")
+        val repo = FileRepositoryBuilder().setGitDir(gitDir.toFile()).build()
+        val git = Git(repo)
+        return git.tagList()
+                .call()
+                .asSequence()
+                .filterNotNull()
+                .map { it.name }
+                .map {
+                    it
+                            .replace("refs/tags/", "")
+                            .replace("/", "__")
+                }
     }
 
     fun files(path: Path, target: String = Constants.HEAD): Sequence<GitFile> {
