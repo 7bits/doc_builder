@@ -10,7 +10,7 @@ class App {
         fun main(args: Array<String>) {
             val options = Options()
             val jc = JCommander.newBuilder().addObject(options).build().apply {
-                programName = "Document builder"
+                programName = "java -jar doc_builder.jar"
             }
 
             jc.parse(*args)

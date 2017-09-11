@@ -21,7 +21,7 @@ class Options {
             required = false,
             converter = PathConverter::class
     )
-    var destination: Path = Paths.get("doc_build")
+    var destination: Path = Paths.get("docs")
 
     @Parameter(
             names = arrayOf("--server"),
@@ -43,10 +43,10 @@ class Options {
             required = false,
             converter = PatternConverter::class
     )
-    var pattern: Pattern = Pattern.compile(".*/(.*?)/doc/index\\.md")
+    var pattern: Pattern = Pattern.compile(".*/(.*?)/README\\.md")
 
     @Parameter(
-            names = arrayOf("--help", "--usage"),
+            names = arrayOf("--help", "--usage", "-h"),
             description = "Display the help"
     )
     var usage: Boolean = false
