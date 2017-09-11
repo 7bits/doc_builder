@@ -7,7 +7,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 
-// TODO: somehow understand that we iterate over git branches
+
 class Documentation(
         private val source: Path,
         private val destination: Path,
@@ -32,7 +32,7 @@ class Documentation(
             log.error("Can't create destination at path '${destination.toAbsolutePath()}'.", e)
         }
 
-        val docs = fileReader.all(source).mapNotNull {
+        return fileReader.all(source).mapNotNull {
             try {
                 log.info(it.path.toString())
                 val content = renderer.render(it.reader)
@@ -44,8 +44,6 @@ class Documentation(
                 null
             }
         }
-
-        return docs
     }
 
     private fun createFile(path: Path, target: Path): File {

@@ -1,16 +1,11 @@
 package it._7bits.doc_builder
 
 import com.beust.jcommander.JCommander
-import it._7bits.doc_builder.readers.GitFilesReader
-import it._7bits.doc_builder.readers.LocalFilesReader
 import it._7bits.doc_builder.versions.DummyVersionGenerator
 import it._7bits.doc_builder.versions.GitVersionsGenerator
-import java.nio.file.Paths
 
 class App {
     companion object {
-        private val log = logger()
-
         @JvmStatic
         fun main(args: Array<String>) {
             val options = Options()
@@ -32,34 +27,16 @@ class App {
             val indexRenderer = IndexRenderer(indexWriter)
             val renderer = MarkdownRenderer()
 
-            val serverThread = Thread({
-                if (options.server) {
+            val serverThread = if (options.server) {
+                Thread({
                     StaticServer.start(filesPath = options.destination.toAbsolutePath().toString())
-                }
-            })
-            serverThread.start()
+                })
+            } else null
+            serverThread?.start()
 
-            val versions = generator.versions(source = options.source, destination = options.destination)
-            versions.forEach { destination ->
-                log.info("Version: ${destination.fileName}")
-                val fileReader = if (options.git) GitFilesReader(destination.fileName.toString()) else LocalFilesReader()
-                val doc = Documentation(
-                        source = options.source,
-                        destination = destination,
-                        fileReader = fileReader,
-                        fileNameBuilder = fileNameBuilder,
-                        writer = writer,
-                        renderer = renderer
-                )
+            SiteGenerator.generate(generator, options, fileNameBuilder, writer, renderer, indexRenderer)
 
-                val docs = doc.build()
-                indexRenderer.createIndex(docs.map { destination.fileName.resolve(it) }, destination)
-            }
-
-            indexRenderer.createIndex(versions.map { it.fileName }, options.destination)
-
-
-            serverThread.join()
+            serverThread?.join()
         }
     }
 }
