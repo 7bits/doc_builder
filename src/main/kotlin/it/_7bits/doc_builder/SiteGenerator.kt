@@ -32,6 +32,10 @@ object SiteGenerator {
             indexRenderer.createIndex(docs.map { destination.fileName.resolve(it) }, destination)
         }
 
-        indexRenderer.createIndex(versions.map { it.fileName }, options.destination)
+//        TODO: disabled for reason described below
+//        As for now, DocBuilder is unable to go through all git branches and generate documentations.
+//        val versions contains only one version. In the end, index.html with wrong reference ends up being broken.
+//        This feature needs to be fixed, but not now. As for now, we need to have functional index.html
+//        indexRenderer.createIndex(versions.map { it.fileName }, options.destination)
     }
 }
