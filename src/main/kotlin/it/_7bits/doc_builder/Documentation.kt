@@ -6,6 +6,7 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
+import java.util.regex.Pattern
 
 
 class Documentation(
@@ -14,7 +15,8 @@ class Documentation(
         private val fileReader: IFileReader = LocalFilesReader(),
         private val writer: IWriter = JadeWriter("templates/layout"),
         private val renderer: IRenderer = MarkdownRenderer(),
-        private val fileNameBuilder: FileNameBuilder = FileNameBuilder()
+        private val fileNameBuilder: FileNameBuilder = FileNameBuilder(),
+        private val pattern: Pattern
 ) {
     private val log = logger()
 
@@ -32,7 +34,8 @@ class Documentation(
             log.error("Can't create destination at path '${destination.toAbsolutePath()}'.", e)
         }
 
-        return fileReader.all(source).mapNotNull {
+        return fileReader.all(source).filter { pattern.matcher(it.path.toString()).find() }
+                .mapNotNull {
             try {
                 log.info(it.path.toString())
                 val content = renderer.render(it.reader)

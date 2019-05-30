@@ -25,7 +25,8 @@ object SiteGenerator {
                     fileReader = fileReader,
                     fileNameBuilder = fileNameBuilder,
                     writer = writer,
-                    renderer = renderer
+                    renderer = renderer,
+                    pattern = options.pattern
             )
 
             val docs = doc.build()
