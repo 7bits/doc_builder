@@ -16,12 +16,13 @@ object SiteGenerator {
             indexRenderer: IndexRenderer
     ) {
         val versions = generator.versions(source = options.source, destination = options.destination)
-        versions.forEach { destination ->
-            log.info("Version: ${destination.fileName}")
-            val fileReader = if (options.git) GitFilesReader(destination.fileName.toString()) else LocalFilesReader()
+        versions.forEach { version ->
+            log.info("Version: $version")
+            val fileReader = if (options.git) GitFilesReader(version.toString()) else LocalFilesReader()
+            val fullPath = options.destination.resolve(version)
             val doc = Documentation(
                     source = options.source,
-                    destination = destination,
+                    destination = fullPath,
                     fileReader = fileReader,
                     fileNameBuilder = fileNameBuilder,
                     writer = writer,
@@ -29,9 +30,11 @@ object SiteGenerator {
             )
 
             val docs = doc.build()
-            indexRenderer.createIndex(docs.map { destination.fileName.resolve(it) }, destination)
+            indexRenderer.createIndex(docs.map { version.resolve(it) }, fullPath, false)
         }
 
-        indexRenderer.createIndex(versions.map { it.fileName }, options.destination)
+        if (options.git) {
+            indexRenderer.createIndex(versions.map { it }, options.destination, true)
+        }
     }
 }

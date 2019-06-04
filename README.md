@@ -13,7 +13,7 @@ Usage: java -jar doc_builder.jar [options]
       Path to the destination location
       Default: doc_build
     --git
-      Use git and generate as many API versions as many git refs exists
+      Use git and generate as many API versions of origin refs
       Default: false
     --pattern
       File name extractor pattern. Read how java Matcher and Pattern works

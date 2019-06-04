@@ -9,6 +9,9 @@ html(lang='en')
         h1 Documentation
         for doc in docs
             article
-                header
+                if isFullPathUsed
                     h3
-                        a(href=doc) #{doc.getFileName()}
+                        a(href=doc) #{doc}
+                else
+                    h3
+                        a(href=doc.getFileName()) #{doc.getFileName()}

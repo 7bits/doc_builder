@@ -25,15 +25,14 @@ object GitFacade {
                 .asSequence()
                 .filterNotNull()
                 .map { it.name }
+                // TODO: think about another remotes
+                .filter { it.startsWith("refs/remotes/origin") }
                 .map {
-                    // TODO: I know it could be regexp but who cares
-                    it
-                            .replace("refs/heads/", "")
-                            .replace("refs/remotes/", "")
-                            .replace("/", "__")
+                    it.replace("refs/remotes/origin/", "")
                 }.filterNot { it == "HEAD" }
     }
 
+    // TODO: check tags
     fun tags(path: Path): Sequence<String> {
         val gitDir = path.resolve(".git")
         val repo = FileRepositoryBuilder().setGitDir(gitDir.toFile()).build()
@@ -46,14 +45,14 @@ object GitFacade {
                 .map {
                     it
                             .replace("refs/tags/", "")
-                            .replace("/", "__")
                 }
     }
 
     fun files(path: Path, target: String = Constants.HEAD): Sequence<GitFile> {
         val gitDir = path.resolve(".git")
         val repo = FileRepositoryBuilder().setGitDir(gitDir.toFile()).build()
-        val lastCommitId = repo.resolve(target)
+        // TODO: think about another remotes
+        val lastCommitId = repo.resolve("origin/$target")
 
         val rw = RevWalk(repo)
         val tw = TreeWalk(repo)
