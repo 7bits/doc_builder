@@ -19,7 +19,7 @@ object SiteGenerator {
         versions.forEach { version ->
             log.info("Version: $version")
             val fileReader = if (options.git) GitFilesReader(version.toString()) else LocalFilesReader()
-            val fullPath = options.destination.resolve(version)
+            val fullPath = if (options.git) options.destination.resolve(version) else version
             val doc = Documentation(
                     source = options.source,
                     destination = fullPath,
